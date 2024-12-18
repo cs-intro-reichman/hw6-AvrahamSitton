@@ -245,7 +245,7 @@ public class Runigram {
 		for (int i = 0; i < n; i++) {
 			double step = i / n;
 			display(blend(target, newSource, step));
-			StdDraw.pause(5);
+			StdDraw.pause(500);
 		}
 		//// Replace this comment with your code
 	}
