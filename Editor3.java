@@ -9,7 +9,7 @@ import java.awt.Color;
  * java Editor3 cake.ppm ironman.ppm 50
  * Note: There is no need to scale the target image to the size of the source
  * image, since Runigram.morph performs this action.
- */
+ */ 
 public class Editor3 {
 
 	public static void main (String[] args) {

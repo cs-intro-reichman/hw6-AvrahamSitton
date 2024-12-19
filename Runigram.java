@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.event.FocusAdapter;
 
 /** A library of image processing functions. */
 public class Runigram {
@@ -15,14 +14,10 @@ public class Runigram {
 		print(scaled(tinypic, 3, 5));
 		// Creates an image which will be the result of various
 		// image processing operations:
-		Color[][] image;
+		// Color[][] image;
 
 		// Tests the horizontal flipping of an image:
-		image = flippedHorizontally(tinypic);
-		System.out.println();
-		// print(image);
-		System.out.println("the acual test");
-		// print(scaled(image, 5, 3));
+		// image = flippedHorizontally(tinypic);
 
 		//// Write here whatever code you need in order to test your work.
 		//// You can continue using the image array.
@@ -82,7 +77,8 @@ public class Runigram {
 			System.out.println();
 		}
 		//// Replace this comment with your code
-		//// Notice that all you have to so is print every element (i,j) of the array using the print(Color) function.
+		//// Notice that all you have to so is print every element (i,j) of the array
+		//// using the print(Color) function.
 	}
 
 	/**
@@ -197,12 +193,25 @@ public class Runigram {
 	 * values in the two input color.
 	 */
 	public static Color blend(Color c1, Color c2, double alpha) {
-		int r = (int) (alpha * c1.getRed() + (1 - alpha) * c2.getRed()),
-				g = (int) (alpha * c1.getRed() + (1 - alpha) * c2.getGreen()),
-				b = (int) (alpha * c1.getGreen() + (1 - alpha) * c2.getBlue());
-		Color Bland = new Color(r, g, b);
-		//// Replace the following statement with your code
-		return Bland;
+		if (alpha == 0)
+			return c2;
+		if (alpha == 1)
+			return c1;
+		int r = minMax((alpha * c1.getRed() + (1 - alpha) * c2.getRed()));
+		int g = minMax((alpha * c1.getRed() + (1 - alpha) * c2.getGreen()));
+		int b = minMax((alpha * c1.getGreen() + (1 - alpha) * c2.getBlue()));
+
+		// Color Bland = new Color(r, g, b);
+		return new Color(r, g, b);
+	}
+
+	/*
+	 * public static int minMax(int x) {
+	 * return Math.max(0, Math.min(x, 255));
+	 * }
+	 */
+	public static int minMax(double x) {
+		return (int) Math.max(0, Math.min(x, 255));
 	}
 
 	/**
@@ -214,6 +223,13 @@ public class Runigram {
 	 * The two images must have the same dimensions.
 	 */
 	public static Color[][] blend(Color[][] image1, Color[][] image2, double alpha) {
+		if (alpha == 1)
+			return image1;
+		if (alpha == 0)
+			return image2;
+		if (image1.length != image2.length || image1[0].length != image2[0].length) {
+			return null;
+		}
 		int rows = image1.length,
 				cols = image1[0].length;
 		Color[][] blendIm = new Color[rows][cols];
@@ -226,7 +242,6 @@ public class Runigram {
 			}
 
 		}
-		//// Replace the following statement with your code
 		return blendIm;
 	}
 
@@ -237,17 +252,18 @@ public class Runigram {
 	 * of the source image.
 	 */
 	public static void morph(Color[][] source, Color[][] target, int n) {
-		Color[][] newSource = new Color[target.length][target[0].length];
-		if (source.length != newSource.length || source[0].length != newSource[0].length) {
-			newSource = scaled(source, target.length, target[0].length);
+		Color[][] newSource;
+		if (source.length != target.length || source[0].length != target[0].length) {
+			newSource = scaled(source, target[0].length, target.length);
 		} else
-			newSource = source;
-		for (int i = 0; i < n; i++) {
-			double step = i / n;
+			
+		newSource = source;
+		setCanvas(target);
+		for (int i = 0; i <= n; i++) {
+			double step = (double) i / n; //
 			display(blend(target, newSource, step));
 			StdDraw.pause(500);
 		}
-		//// Replace this comment with your code
 	}
 
 	/** Creates a canvas for the given image. */
@@ -265,8 +281,10 @@ public class Runigram {
 
 	/** Displays the given image on the current canvas. */
 	public static void display(Color[][] image) {
-		int height = image.length;
-		int width = image[0].length;
+		if (image == null)
+			return;
+		int height = image.length,
+				width = image[0].length;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				// Sets the pen color to the pixel color
